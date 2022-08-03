@@ -3,6 +3,17 @@
 This extension (primarily written to solve [this problem](https://github.com/microsoft/vscode/issues/131319)) does its best to prevent your vscode editor from ever becoming half editor, half terminal. Any time that split can occur,
 this extension either fully opens or fully closes the terminal.
 
+## Setup
+
+Install this extension and verify that the keyboard
+shortcut you use for terminal panel toggling is set to
+`workbench.action.toggleMaximizedPanel` and ***not*** to
+`workbench.action.togglePanel`. The latter will toggle the
+terminal back to its previous size which can sometimes
+be set to half-screen (this happens in the split-second
+after a file is opened but before this extension hides the
+terminal panel).
+
 ## All-or-Nothing Cases
 
 This extension hides the terminal whenever editor focus changes.
