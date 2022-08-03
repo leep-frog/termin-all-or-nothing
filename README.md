@@ -5,13 +5,29 @@ this extension either fully opens or fully closes the terminal.
 
 ## All-or-Nothing Cases
 
-### File Explorer Click
+This section enumerates potential window splits that this
+extension deals with.
 
-When clicking a file in the File Explorer, this extension will automatically close
-the terminal.
+ - File Explorer click from terminal focus
+
+## Contribute
+
+This is a relatively simple extension so feel free to open issues or
+pull requests, and I'll try to respond in a timely manner.
+
+## Appreciate
+
+I find it very rewarding to know that my projects made someone's day or
+developer life a little better. If you feel so inclined, either star this repo
+or [buy my a coffee](https://paypal.me/sleepfrog) so I know my project helped
+you out!
 
 ## Release Notes
 
 ### 1.0.0
 
 Initial release. Deals with `File Explorer Click` case.
+
+### 1.0.1
+
+Updated callback to `vscode.window.onDidChangeVisibleTextEditors`.
