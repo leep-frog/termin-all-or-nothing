@@ -29,7 +29,7 @@ pull requests, and I'll try to respond in a timely manner.
 ## Appreciate
 
 I find it very rewarding to know that my projects made someone's day or
-developer life a little better. If you feel so inclined, either star this repo
+developer life a little better. If you feel so inclined, leave a review
 or [buy my a coffee](https://paypal.me/sleepfrog) so I know my project helped
 you out!
 
