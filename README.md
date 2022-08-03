@@ -5,11 +5,11 @@ this extension either fully opens or fully closes the terminal.
 
 ## All-or-Nothing Cases
 
-This section enumerates potential window splits that this
-extension deals with.
+This extension hides the terminal whenever editor focus changes.
+Below are a few of the primary use cases considered:
 
  - File Explorer click from terminal focus
-
+ - Open file from Quick Open
 ## Contribute
 
 This is a relatively simple extension so feel free to open issues or
@@ -24,10 +24,15 @@ you out!
 
 ## Release Notes
 
-### 1.0.0
+### 1.0.4
 
-Initial release. Deals with `File Explorer Click` case.
+Close panel on more listener events.
 
 ### 1.0.1
 
 Updated callback to `vscode.window.onDidChangeVisibleTextEditors`.
+
+
+### 1.0.0
+
+Initial release. Deals with `File Explorer Click` case.
