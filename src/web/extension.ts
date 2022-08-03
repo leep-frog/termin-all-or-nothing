@@ -5,8 +5,10 @@ import * as vscode from 'vscode';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-  context.subscriptions.push(vscode.workspace.onDidOpenTextDocument((doc) => {
-    vscode.commands.executeCommand("workbench.action.closePanel");
+  context.subscriptions.push(vscode.window.onDidChangeVisibleTextEditors((editors) => {
+    if (editors.length > 0) {
+      vscode.commands.executeCommand("workbench.action.closePanel");
+    }
   }));
 }
 
