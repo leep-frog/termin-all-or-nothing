@@ -1,13 +1,13 @@
 {
 	"name": "termin-all-or-nothing",
 	"displayName": "termin-all-or-nothing",
-	"description": "I either want to see a full screen terminal or a full screen editor, nothing in between.",
+	"description": "Prevent cyborg editors (half-editor, half-terminal).",
   "publisher": "groogle",
   "repository": {
     "type": "git",
     "url": "https://github.com/leep-frog/termin-all-or-nothing"
   },
-	"version": "1.0.9",
+	"version": "1.0.10",
 	"engines": {
 		"vscode": "^1.54.0"
 	},
