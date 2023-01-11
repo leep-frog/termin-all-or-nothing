@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/leep-frog/termin-all-or-nothing"
   },
-	"version": "1.0.11",
+	"version": "2.0.0",
 	"engines": {
 		"vscode": "^1.54.0"
 	},
@@ -16,12 +16,24 @@
 	],
   "icon": "logo.png",
 	"activationEvents": [
-    "onStartupFinished"
+    "onStartupFinished",
+    "onCommand:termin-all-or-nothing.closePanel",
+    "onCommand:termin-all-or-nothing.openPanel"
 	],
 	"browser": "./dist/web/extension.js",
 	"contributes": {
 		"commands": [
-		]
+      {
+        "command": "termin-all-or-nothing.closePanel",
+        "title": "Termin-All-Or-Nothing: Close Panel"
+      },
+      {
+        "command": "termin-all-or-nothing.openPanel",
+        "title": "Termin-All-Or-Nothing: Open Panel"
+      }
+		],
+    "keybindings": [
+    ]
 	},
 	"scripts": {
 		"test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js",
