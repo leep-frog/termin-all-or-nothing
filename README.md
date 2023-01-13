@@ -53,7 +53,7 @@ extension has considered the following cases:
 
 ## Known Issues & Fixes
 
-### Output Tab Closes Immediately After Opening
+### Output Tab Closes Immediately After Opening [Solutions Provided]
 
 Based on the available listeners (or lack thereof) in the VS Code API and how
 this extension was implemented, there is one major issue to callout;
@@ -104,7 +104,7 @@ like the following:
 },
 ```
 
-### Panel Closing After Running VS Code Commands
+### Panel Closing After Running VS Code Commands [Solutions Provided]
 
 Occassionally, running built-in commands (e.g.
 `workbench.action.toggleMaximizedPanel`) will open the panel and then
@@ -127,6 +127,14 @@ and closing the panel:
   "when": "activePanel"
 },
 ```
+
+### Auto-Closes Panel on File-Change [Pending Solution]
+
+When you are in the panel and an open file is changed (e.g. by running
+something like `echo "add" >> openFile.txt` or some file-editting script),
+then the panel will auto-close. Unfortunately, this is a side-effect of how this
+extension is implemented. I am considering fixes for this, but have yet to
+find a solution that closes this issue without creating other ones.
 
 ## Contribute
 
