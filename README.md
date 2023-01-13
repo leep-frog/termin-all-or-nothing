@@ -38,7 +38,7 @@ Additionally, update the following field in your settings:
 There are many ways that a terminal/editor can be opened in VS Code. This
 extension has considered the following cases:
 
- - `termin-all-or-nothing.[close/open]Panel` commands
+ - `termin-all-or-nothing.[open/Close]Panel` commands
  - File Explorer single-click on currently unopened file during terminal
    focus (closes terminal)
  - File Explorer double-click on currently unopened file during terminal
@@ -51,24 +51,89 @@ extension has considered the following cases:
 > If there are any other cases you'd like this extension to consider, please
 [open an issue for it](https://github.com/leep-frog/termin-all-or-nothing/issues).
 
-## Caveats
+## Known Issues & Fixes
 
-> TLDR: You should try to open/close the panel exclusively by using the
-`termin-all-or-nothing.[open/close]Panel` commands.
+### Output Tab Closes Immediately After Opening
 
 Based on the available listeners (or lack thereof) in the VS Code API and how
-this extension was implemented, there are some limitations of this extension
-to be mindful of:
+this extension was implemented, there is one major issue to callout;
+specifically, whenever a VS Code command or execution simultaneously (1) sends
+data to the output tab *and* (2) switches focus to the output tab, then the
+panel is automatically closed (thus undoing the intentional focus switch done
+by (2)).
 
- - The native VS Code commands for opening the panel/terminal view (
-  `View -> Terminal`, `terminal.focus`, `workbench.action.toggleMaximizedPanel`,
-  etc.) have been considered and overriden if possible. To avoid unexpected
-  behavior, be sure to use this extension's commands when feasible.
+There are two simple fixes to this:
+
+1. Simply run `termin-all-or-nothing.openPanel` again, and you will be brought
+back to the output tab in the panel view just fine.
+
+2. Wrap the vscode command that causes this issue with the
+`termin-all-or-nothing.execute` command. For example, if this is your
+regular command that encounters the issue:
+
+```jsonc
+{
+  "key": "ctrl+x ctrl+t",
+  "command": "go.test.package",
+  "args": {
+    "arg1": "value1",
+    "arg2": ["value", "2"],
+    // etc.
+  },
+},
+```
+
+then you should simply wrap the `command` and `args` fields one level deeper
+like the following:
+
+```jsonc
+{
+  "key": "ctrl+x ctrl+t",
+  "command": "termin-all-or-nothing.execute",
+  "args": {
+    // This value defaults to false, but is shown here as an fyi.
+    "autoCloseEnabled": false,
+    // Original command and arguments:
+    "command": "go.test.package",
+    "args": {
+      "arg1": "value1",
+      "arg2": ["value", "2"],
+      // etc.
+    },
+  },
+},
+```
+
+### Panel Closing After Running VS Code Commands
+
+Occassionally, running built-in commands (e.g.
+`workbench.action.toggleMaximizedPanel`) will open the panel and then
+immediately close it. This can be fixed by the same two solutions recommended
+in the previous section, or by switching any keybinding that runs these commands
+to execute `termin-all-or-nothing.[open/close]Panel` instead.
+
+I find the following two keybindings to be sufficient for manually opening
+and closing the panel:
+
+```jsonc
+{
+  "key": "ctrl+t",
+  "command": "termin-all-or-nothing.openPanel",
+  "when": "!activePanel"
+},
+{
+  "key": "ctrl+t",
+  "command": "termin-all-or-nothing.closePanel",
+  "when": "activePanel"
+},
+```
 
 ## Contribute
 
-This is a relatively lightweight extension so feel free to open issues or
-pull requests, and I'll try to respond in a timely manner.
+Feel free to
+[open issues](https://github.com/leep-frog/termin-all-or-nothing/issues) or
+[pull requests](https://github.com/leep-frog/termin-all-or-nothing/pulls),
+and I'll do my best to respond in a timely manner.
 
 ## Appreciate
 
@@ -78,6 +143,11 @@ or [buy my a coffee](https://paypal.me/sleepfrog) so I know my project helped
 you out!
 
 ## Release Notes
+
+### 2.2.0
+
+Added `termin-all-or-nothing.autoClosePanel.[enable/disable]` commands and the
+wrapper command `termin-all-or-nothing.execute`.
 
 ### 2.0.0
 
