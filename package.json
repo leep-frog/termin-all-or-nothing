@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/leep-frog/termin-all-or-nothing"
   },
-	"version": "2.1.0",
+	"version": "2.2.0",
 	"engines": {
 		"vscode": "^1.54.0"
 	},
@@ -18,7 +18,10 @@
 	"activationEvents": [
     "onStartupFinished",
     "onCommand:termin-all-or-nothing.closePanel",
-    "onCommand:termin-all-or-nothing.openPanel"
+    "onCommand:termin-all-or-nothing.openPanel",
+    "onCommand:termin-all-or-nothing.autoClosePanel.enable",
+    "onCommand:termin-all-or-nothing.autoClosePanel.disable",
+    "onCommand:termin-all-or-nothing.autoClosePanel.execute"
 	],
 	"browser": "./dist/web/extension.js",
 	"contributes": {
@@ -30,6 +33,18 @@
       {
         "command": "termin-all-or-nothing.openPanel",
         "title": "Termin-All-Or-Nothing: Open Panel"
+      },
+      {
+        "command": "termin-all-or-nothing.autoClosePanel.enable",
+        "title": "Termin-All-Or-Nothing: Enable Panel Auto-Closing"
+      },
+      {
+        "command": "termin-all-or-nothing.autoClosePanel.disable",
+        "title": "Termin-All-Or-Nothing: Disable Panel Auto-Closing"
+      },
+      {
+        "command": "termin-all-or-nothing.execute",
+        "title": "Termin-All-Or-Nothing: Execute a command wrapped with termin-all-or-nothing options specified"
       }
 		],
     "keybindings": [
