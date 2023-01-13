@@ -1,10 +1,10 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-function extensionCommand(subCommand : string) : string {
+function extensionCommand(subCommand: string): string {
   return `termin-all-or-nothing.${subCommand}`;
 }
 
-const unsetCommands : string[] = [
+const unsetCommands: string[] = [
   // Don't override this because we call it ourselves.
   // "workbench.action.toggleMaximizedPanel",
 ];
@@ -32,23 +32,23 @@ Tests:
 - Test running go.test.package commmand and groog.message.info (with args) wrapped by execute
 */
 
-function rangeToString(range : vscode.Range) : string {
-  return `(${range.start.line}.${range.start.character}, ${range.end.line}.${range.end.character})`
+function rangeToString(range: vscode.Range): string {
+  return `(${range.start.line}.${range.start.character}, ${range.end.line}.${range.end.character})`;
 }
 
-function isOutputUri(uri : vscode.Uri) : boolean {
+function isOutputUri(uri: vscode.Uri): boolean {
   return uri.scheme === "output";
 }
 
-function differenceOutputOnly(setA : Set<string>, setB : Set<string>) : boolean {
-  const diff = new Set([...setA].filter(x => !setB.has(x)));
+function differenceOutputOnly(setA: Set<string>, setB: Set<string>): boolean {
+  const diff = new Set([...setA,].filter(x => !setB.has(x)));
   return Array.from(diff).filter(s => isOutputUri(vscode.Uri.parse(s))).length === 0;
 }
 
 export class Terminator {
 
-  private togglingPanel : boolean;
-  private autoClosingEnabled : boolean;
+  private togglingPanel: boolean;
+  private autoClosingEnabled: boolean;
 
   // The previous editor that wasn't an output editor.
   /*private previouslyActiveNonOutputEditor : vscode.Uri | undefined;
@@ -70,7 +70,7 @@ export class Terminator {
     this.registerCommand(context, extensionCommand("autoClosePanel.enable"), () => this.setAutoClose(true));
     this.registerCommand(context, extensionCommand("autoClosePanel.disable"), () => this.setAutoClose(false));
 
-    this.registerCommand(context, extensionCommand("execute"), (args : ExecuteArgs) => this.execute(args));
+    this.registerCommand(context, extensionCommand("execute"), (args: ExecuteArgs) => this.execute(args));
 
     // This only activates when a terminal is created, focus is changed from one terminal
     // to another terminal, or all terminals are terminated (aka permanently closed).
@@ -173,7 +173,7 @@ export class Terminator {
     }
   }
 
-  register(context: vscode.ExtensionContext, ...sub : { dispose(): any }[]) {
+  register(context: vscode.ExtensionContext, ...sub: { dispose(): any }[]) {
     context.subscriptions.push(...sub);
   }
 
@@ -181,11 +181,11 @@ export class Terminator {
     this.register(context, vscode.commands.registerCommand(commandName, callback));
   }
 
-  async setAutoClose(value : boolean) : Promise<void> {
+  async setAutoClose(value: boolean): Promise<void> {
     this.autoClosingEnabled = value;
   }
 
-  async openPanel() : Promise<void> {
+  async openPanel(): Promise<void> {
     if (this.togglingPanel) {
       return;
     }
@@ -194,7 +194,7 @@ export class Terminator {
     this.togglingPanel = false;
   }
 
-  async closePanel(userInitiated : boolean, id : string) : Promise<void> {
+  async closePanel(userInitiated: boolean, id: string): Promise<void> {
     if (this.togglingPanel) {
       return;
     }
@@ -205,8 +205,8 @@ export class Terminator {
     }
   }
 
-  async execute(args : ExecuteArgs) {
-    const oldValue : boolean = this.autoClosingEnabled;
+  async execute(args: ExecuteArgs) {
+    const oldValue: boolean = this.autoClosingEnabled;
     this.autoClosingEnabled = !!args.autoCloseEnabled;
 
     await vscode.commands.executeCommand(args.command, args.args);

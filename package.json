@@ -2,11 +2,11 @@
 	"name": "termin-all-or-nothing",
 	"displayName": "termin-all-or-nothing",
 	"description": "Prevent cyborg editors (half-editor, half-terminal).",
-  "publisher": "groogle",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/leep-frog/termin-all-or-nothing"
-  },
+	"publisher": "groogle",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/leep-frog/termin-all-or-nothing"
+	},
 	"version": "2.2.1",
 	"engines": {
 		"vscode": "^1.54.0"
@@ -14,41 +14,40 @@
 	"categories": [
 		"Other"
 	],
-  "icon": "logo.png",
+	"icon": "logo.png",
 	"activationEvents": [
-    "onStartupFinished",
-    "onCommand:termin-all-or-nothing.closePanel",
-    "onCommand:termin-all-or-nothing.openPanel",
-    "onCommand:termin-all-or-nothing.autoClosePanel.enable",
-    "onCommand:termin-all-or-nothing.autoClosePanel.disable",
-    "onCommand:termin-all-or-nothing.autoClosePanel.execute"
+		"onStartupFinished",
+		"onCommand:termin-all-or-nothing.closePanel",
+		"onCommand:termin-all-or-nothing.openPanel",
+		"onCommand:termin-all-or-nothing.autoClosePanel.enable",
+		"onCommand:termin-all-or-nothing.autoClosePanel.disable",
+		"onCommand:termin-all-or-nothing.autoClosePanel.execute"
 	],
 	"browser": "./dist/web/extension.js",
 	"contributes": {
 		"commands": [
-      {
-        "command": "termin-all-or-nothing.closePanel",
-        "title": "Termin-All-Or-Nothing: Close Panel"
-      },
-      {
-        "command": "termin-all-or-nothing.openPanel",
-        "title": "Termin-All-Or-Nothing: Open Panel"
-      },
-      {
-        "command": "termin-all-or-nothing.autoClosePanel.enable",
-        "title": "Termin-All-Or-Nothing: Enable Panel Auto-Closing"
-      },
-      {
-        "command": "termin-all-or-nothing.autoClosePanel.disable",
-        "title": "Termin-All-Or-Nothing: Disable Panel Auto-Closing"
-      },
-      {
-        "command": "termin-all-or-nothing.execute",
-        "title": "Termin-All-Or-Nothing: Execute a command wrapped with termin-all-or-nothing options specified"
-      }
+			{
+				"command": "termin-all-or-nothing.closePanel",
+				"title": "Termin-All-Or-Nothing: Close Panel"
+			},
+			{
+				"command": "termin-all-or-nothing.openPanel",
+				"title": "Termin-All-Or-Nothing: Open Panel"
+			},
+			{
+				"command": "termin-all-or-nothing.autoClosePanel.enable",
+				"title": "Termin-All-Or-Nothing: Enable Panel Auto-Closing"
+			},
+			{
+				"command": "termin-all-or-nothing.autoClosePanel.disable",
+				"title": "Termin-All-Or-Nothing: Disable Panel Auto-Closing"
+			},
+			{
+				"command": "termin-all-or-nothing.execute",
+				"title": "Termin-All-Or-Nothing: Execute a command wrapped with termin-all-or-nothing options specified"
+			}
 		],
-    "keybindings": [
-    ]
+		"keybindings": []
 	},
 	"scripts": {
 		"test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js",
@@ -61,19 +60,19 @@
 		"run-in-browser": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. ."
 	},
 	"devDependencies": {
-		"@types/vscode": "^1.54.0",
 		"@types/mocha": "^9.1.1",
-		"eslint": "^8.18.0",
-		"@typescript-eslint/eslint-plugin": "^5.30.0",
-		"@typescript-eslint/parser": "^5.30.0",
-		"mocha": "^10.0.0",
-		"typescript": "^4.7.4",
-		"@vscode/test-web": "^0.0.26",
-		"ts-loader": "^9.3.1",
-		"webpack": "^5.73.0",
-		"webpack-cli": "^4.10.0",
+		"@types/vscode": "^1.54.0",
 		"@types/webpack-env": "^1.17.0",
+		"@typescript-eslint/eslint-plugin": "^5.48.1",
+		"@typescript-eslint/parser": "^5.48.1",
+		"@vscode/test-web": "^0.0.26",
 		"assert": "^2.0.0",
-		"process": "^0.11.10"
+		"eslint": "^8.31.0",
+		"mocha": "^10.0.0",
+		"process": "^0.11.10",
+		"ts-loader": "^9.3.1",
+		"typescript": "^4.7.4",
+		"webpack": "^5.73.0",
+		"webpack-cli": "^4.10.0"
 	}
 }
