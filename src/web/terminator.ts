@@ -27,7 +27,7 @@ Tests:
 - File explorer double-click unopened file from terminal
 - File explorer single-click open file from terminal (does nothing)
 - File explorer double-click open file from terminal
-- `code filename.txt` for an open file from terminal
+- `code filename.txt` for an open file from terminal (does nothing)
 - `code filename.txt` for an unopened file from terminal
 - openPanel to output tab (should not close panel)
 - switch panel tab to output tab (should not close panel)

@@ -46,9 +46,7 @@ extension has considered the following cases:
  - File Explorer double-click on already opened file during terminal
    focus (closes terminal)
  - Ctrl+click on currently unopened file in terminal (closes terminal)
- - Ctrl+click on open file in terminal (closes terminal)
  - Running `code filename.txt` from the integrated terminal on a currently unopened file in terminal (closes terminal)
- - Running `code filename.txt` from the integrated terminal on an open file in terminal (closes terminal)
 
 > If there are any other cases you'd like this extension to consider, please
 [open an issue for it](https://github.com/leep-frog/termin-all-or-nothing/issues).
