@@ -17,10 +17,6 @@
 	"icon": "logo.png",
 	"activationEvents": [
 		"onStartupFinished",
-		"onCommand:termin-all-or-nothing.closePanel",
-		"onCommand:termin-all-or-nothing.openPanel",
-		"onCommand:termin-all-or-nothing.autoClosePanel.enable",
-		"onCommand:termin-all-or-nothing.autoClosePanel.disable",
 		"onCommand:termin-all-or-nothing.autoClosePanel.execute"
 	],
 	"browser": "./dist/web/extension.js",

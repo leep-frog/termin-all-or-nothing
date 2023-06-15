@@ -41,28 +41,20 @@ function isOutputUri(uri: vscode.Uri): boolean {
 }
 
 function differenceOutputOnly(setA: Set<string>, setB: Set<string>): boolean {
-  const diff = new Set([...setA,].filter(x => !setB.has(x)));
-  return Array.from(diff).filter(s => isOutputUri(vscode.Uri.parse(s))).length === 0;
+  const aOnly = new Set([...setA,].filter(x => !setB.has(x)));
+  return aOnly.size > 0 && Array.from(aOnly).filter(s => isOutputUri(vscode.Uri.parse(s))).length === aOnly.size;
 }
 
 export class Terminator {
 
   private togglingPanel: boolean;
   private autoClosingEnabled: boolean;
-
-  // The previous editor that wasn't an output editor.
-  /*private previouslyActiveNonOutputEditor : vscode.Uri | undefined;
-  private previouslyActiveEditorWasOutput : boolean;
-
-  private previouslyVisibleEditors : Set<string>;*/
+  private previouslyVisibleEditors : Set<string>;
 
   constructor() {
     this.togglingPanel = false;
     this.autoClosingEnabled = true;
-
-    /*this.previouslyActiveNonOutputEditor = (vscode.window.activeTextEditor && !isOutputUri(vscode.window.activeTextEditor.document.uri)) ? vscode.window.activeTextEditor.document.uri : undefined;
-    this.previouslyActiveEditorWasOutput = false;
-    this.previouslyVisibleEditors = new Set<string>();*/
+    this.previouslyVisibleEditors = new Set(vscode.window.visibleTextEditors.map(ve => ve.document.uri.toString()));
   }
 
   activate(context: vscode.ExtensionContext) {
@@ -89,34 +81,34 @@ export class Terminator {
       }
     }));
 
-    /*this.register(context, vscode.window.onDidChangeVisibleTextEditors((visibleEditors) => {
+    // This triggers when the set of visible text editors (including output panel view) changes.
+    // When opening a file from the terminal, sometimes the onDidChangeTextEditorVisibleRanges
+    // event doesn't fire (and sometimes it does), but this one seems to always handle that case.
+    this.register(context, vscode.window.onDidChangeVisibleTextEditors((visibleEditors) => {
       const newlyVisibleEditors = new Set(visibleEditors.map(ve => ve.document.uri.toString()));
 
+      // If there are no visible editors, then do nothing.
       if (!visibleEditors.length) {
         this.previouslyVisibleEditors = newlyVisibleEditors;
         return;
       }
 
-      if (visibleEditors.filter(ve => isOutputUri(ve.document.uri)).length === 0) {
-        this.previouslyVisibleEditors = newlyVisibleEditors;
-        return;
-      }
-
-      // If the only element added was an output editor, then skip.
+      // If the only element added or removed was an output editor, then skip,
+      // because we may just be switching tabs from the panel view.
       if (differenceOutputOnly(newlyVisibleEditors, this.previouslyVisibleEditors) || differenceOutputOnly(this.previouslyVisibleEditors, newlyVisibleEditors)) {
         this.previouslyVisibleEditors = newlyVisibleEditors;
         return;
       }
 
       // Otherwise, close the panel
-      this.closePanel("VisibleTextEditors");
+      this.closePanel(false, "VisibleTextEditors");
       this.previouslyVisibleEditors = newlyVisibleEditors;
     }));
 
     // This only triggers when a file is closed or focus changes. This won't
     // trigger when the terminal is open (because the active editor behind the
     // terminal is still the same).
-    this.register(context, vscode.window.onDidChangeActiveTextEditor((activeEditor) => {
+    /*this.register(context, vscode.window.onDidChangeActiveTextEditor((activeEditor) => {
       if (!activeEditor) {
         return;
       }
