@@ -67,5 +67,5 @@ you out!
 
 ## Further Reading
 
-- [Release Notes](https://github.com/leep-frog/termin-all-or-nothing/blob/main/ReleaseNotes.md)
-- [FAQs (Common Issues & Solutions)](https://github.com/leep-frog/termin-all-or-nothing/blob/main/FAQ.md)
+- [Release Notes](https://github.com/leep-frog/termin-all-or-nothing/blob/main/docs/ReleaseNotes.md)
+- [FAQs (Common Issues & Solutions)](https://github.com/leep-frog/termin-all-or-nothing/blob/main/docs/FAQ.md)
