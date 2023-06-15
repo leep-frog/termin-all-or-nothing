@@ -17,6 +17,8 @@ const closeCommands = [
   extensionCommand("closePanel"),
 ];
 
+const AUTO_CLOSE_WAIT_THRESHOLD_MS = 300;
+
 /*
 Tests:
 - Ctrl+click unopened file from terminal
@@ -50,11 +52,13 @@ export class Terminator {
   private togglingPanel: boolean;
   private autoClosingEnabled: boolean;
   private previouslyVisibleEditors : Set<string>;
+  private lastOpenTimeMs : number;
 
   constructor() {
     this.togglingPanel = false;
     this.autoClosingEnabled = true;
     this.previouslyVisibleEditors = new Set(vscode.window.visibleTextEditors.map(ve => ve.document.uri.toString()));
+    this.lastOpenTimeMs = 0;
   }
 
   activate(context: vscode.ExtensionContext) {
@@ -182,15 +186,22 @@ export class Terminator {
       return;
     }
     this.togglingPanel = true;
+    this.lastOpenTimeMs = Date.now();
     await vscode.commands.executeCommand("workbench.action.toggleMaximizedPanel");
     this.togglingPanel = false;
+  }
+
+  canAutoClose(): boolean {
+    // Only if auto-closing is enabled and if the user didn't try to open recently.
+    return this.autoClosingEnabled && Date.now() - this.lastOpenTimeMs < AUTO_CLOSE_WAIT_THRESHOLD_MS;
   }
 
   async closePanel(userInitiated: boolean, id: string): Promise<void> {
     if (this.togglingPanel) {
       return;
     }
-    if (userInitiated || this.autoClosingEnabled) {
+
+    if (userInitiated || this.canAutoClose()) {
       this.togglingPanel = true;
       await vscode.commands.executeCommand("workbench.action.closePanel");
       this.togglingPanel = false;
