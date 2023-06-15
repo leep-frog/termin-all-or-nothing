@@ -90,7 +90,7 @@ export class Terminator {
     // This triggers when the set of visible text editors (including output panel view) changes.
     // When opening a file from the terminal, sometimes the onDidChangeTextEditorVisibleRanges
     // event doesn't fire (and sometimes it does), but this one seems to always handle that case.
-    this.register(context, vscode.window.onDidChangeVisibleTextEditors((visibleEditors) => {
+    /*this.register(context, vscode.window.onDidChangeVisibleTextEditors((visibleEditors) => {
       const newlyVisibleEditors = new Set(visibleEditors.map(ve => ve.document.uri.toString()));
 
       // If there are no visible editors, then do nothing.
@@ -109,7 +109,7 @@ export class Terminator {
       // Otherwise, close the panel
       this.closePanel(false, "VisibleTextEditors");
       this.previouslyVisibleEditors = newlyVisibleEditors;
-    }));
+    }));*/
 
     // This only triggers when a file is closed or focus changes. This won't
     // trigger when the terminal is open (because the active editor behind the
