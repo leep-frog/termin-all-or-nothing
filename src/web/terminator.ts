@@ -105,8 +105,8 @@ export class Terminator {
     // This only triggers when a file is closed or focus changes. This won't
     // trigger when the terminal is open (because the active editor behind the
     // terminal is still the same).
-    // This also registers when switching to and from the `Output` tab in the
-    // panel view. Seems like it's just a subset of info available from onDidChangeVisibleTextEditors
+    // This hook also registers when switching to and from the `Output`
+    // tab in the panel view.
     /*this.register(context, vscode.window.onDidChangeActiveTextEditor((activeEditor) => {
     }));*/
 
