@@ -105,6 +105,8 @@ export class Terminator {
     // This only triggers when a file is closed or focus changes. This won't
     // trigger when the terminal is open (because the active editor behind the
     // terminal is still the same).
+    // This also registers when switching to and from the `Output` tab in the
+    // panel view. Seems like it's just a subset of info available from onDidChangeVisibleTextEditors
     /*this.register(context, vscode.window.onDidChangeActiveTextEditor((activeEditor) => {
     }));*/
 
@@ -119,11 +121,12 @@ export class Terminator {
     // This is activated when a file is opened (via File Explorer or ctrl+click in terminal) from
     // the panel view. Those actions cause a half-open page and half-open panel.
     // This event notices that the visible ranges of the files changed and closes the terminal.
+    // **This occasionally triggers when in the panel view which can cause the panel
+    // to close unexpectedly. I'm not sure of all of the cases that cause such behavior
+    // while in the panel, but given the fragility of it, it's probably best to avoid using.**
     /*this.register(context, vscode.window.onDidChangeTextEditorVisibleRanges((event) => {
-      console.log("UNO: " + event.textEditor.document.uri.toString());
       if (!isOutputUri(event.textEditor.document.uri) && event.visibleRanges.length) {
         this.closePanel(false, "TextEditorVisibleRange");
-        console.log("CLOSING 1");
       }
     }));*/
   }
