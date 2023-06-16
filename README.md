@@ -16,12 +16,9 @@ There are many ways that a terminal/editor can be opened in VS Code. This
 extension has considered the following cases:
 
  - Open a file from the VS Code Command Pallete while in the panel view
- - `termin-all-or-nothing.[open/Close]Panel` commands
  - File Explorer single-click on currently unopened file during terminal
    focus (closes terminal)
  - File Explorer double-click on currently unopened file during terminal
-   focus (closes terminal)
- - File Explorer double-click on already opened file during terminal
    focus (closes terminal)
  - Ctrl+click on currently unopened file in terminal (closes terminal)
  - Running `code filename.txt` from the integrated terminal on a currently unopened file in terminal (closes terminal)
