@@ -7,8 +7,13 @@ either fully opens or fully closes the terminal.
 
 ## Setup
 
-The extension should start working automatically after installation. No other
-setup is required.
+The extension should start working automatically after installation.
+
+It is also recommended to update your preferred keyboard
+binding for panel viewing to use the VS Code command
+`workbench.action.toggleMaximizedPanel` (as opposed to
+`workbench.action.togglePanel`) to ensure that you
+are always fully opening or closing the panel.
 
 ## All-or-Nothing Cases
 
