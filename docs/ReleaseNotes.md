@@ -1,5 +1,10 @@
 ## Release Notes
 
+### 4.0.0
+
+- Updated listeners to fix major issues
+- Decreased auto-close delay after manual open
+
 ### 3.0.0
 
 - Added listener for `onDidChangeVisibleTextEditors` to check for editor changes that are occasionally missed by the previous check `onDidChangeTextEditorVisibleRanges` (e.g. [this issue](https://github.com/leep-frog/termin-all-or-nothing/issues/1)).

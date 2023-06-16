@@ -7,37 +7,15 @@ either fully opens or fully closes the terminal.
 
 ## Setup
 
-Install this extension and add the following keybindings to your
-`keybindings.json` file (replacing `key` with whatever key(s) you use to
-toggle between the editor and terminal):
-
-```jsonc
-{
-  "key": "ctrl+t",
-  "command": "termin-all-or-nothing.closePanel",
-  "when": "activePanel"
-},
-{
-  "key": "ctrl+t",
-  "command": "termin-all-or-nothing.openPanel",
-  "when": "!activePanel"
-}
-```
-
-Additionally, update the following field in your settings:
-
-```jsonc
-"terminal.integrated.commandsToSkipShell": [
-  // ...
-  "termin-all-or-nothing.closePanel"
-],
-```
+The extension should start working automatically after installation. No other
+setup is required.
 
 ## All-or-Nothing Cases
 
 There are many ways that a terminal/editor can be opened in VS Code. This
 extension has considered the following cases:
 
+ - Open a file from the VS Code Command Pallete while in the panel view
  - `termin-all-or-nothing.[open/Close]Panel` commands
  - File Explorer single-click on currently unopened file during terminal
    focus (closes terminal)
