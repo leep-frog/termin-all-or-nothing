@@ -10,10 +10,18 @@ either fully opens or fully closes the terminal.
 The extension should start working automatically after installation.
 
 It is also recommended to update your preferred keyboard
-binding for panel viewing to use the VS Code command
+binding (in `keybindings.json`) for panel toggling to use the
+VS Code command
 `workbench.action.toggleMaximizedPanel` (as opposed to
 `workbench.action.togglePanel`) to ensure that you
-are always fully opening or closing the panel.
+are always fully opening or closing the panel. For example,
+
+```json
+  {
+    "key": "ctrl+t",
+    "command": "workbench.action.toggleMaximizedPanel"
+  },
+```
 
 ## All-or-Nothing Cases
 
