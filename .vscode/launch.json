@@ -4,41 +4,31 @@
 // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 {
 	"version": "0.2.0",
-  // Fixes error I was experiencing; see this stack overflow link:
-  // https://stackoverflow.com/questions/62871907/why-after-update-vscode-giving-this-error-could-not-read-source-map-for-no
-  "resolveSourceMapLocations": [
-    "${workspaceFolder}/**",
-    "!**/node_modules/**"
-  ],
 	"configurations": [
 		{
-			"name": "Run Web Extension ",
+			"name": "Run Extension",
 			"type": "extensionHost",
-			"debugWebWorkerHost": true,
 			"request": "launch",
 			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionDevelopmentKind=web"
+				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"outFiles": [
-				"${workspaceFolder}/dist/web/**/*.js"
+				"${workspaceFolder}/out/**/*.js"
 			],
-			"preLaunchTask": "npm: watch-web"
+			"preLaunchTask": "${defaultBuildTask}"
 		},
 		{
 			"name": "Extension Tests",
 			"type": "extensionHost",
-			"debugWebWorkerHost": true,
 			"request": "launch",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionDevelopmentKind=web",
-				"--extensionTestsPath=${workspaceFolder}/dist/web/test/suite/index"
+				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
 			],
 			"outFiles": [
-				"${workspaceFolder}/dist/web/**/*.js"
+				"${workspaceFolder}/out/test/**/*.js"
 			],
-			"preLaunchTask": "npm: watch-web"
+			"preLaunchTask": "${defaultBuildTask}"
 		}
 	]
 }

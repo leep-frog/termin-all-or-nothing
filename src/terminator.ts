@@ -144,6 +144,7 @@ export class Terminator {
   }
 
   async openPanel(): Promise<void> {
+    console.log("OPENING");
     if (this.togglingPanel) {
       return;
     }
@@ -159,6 +160,7 @@ export class Terminator {
   }
 
   async closePanel(userInitiated: boolean, id: string): Promise<void> {
+    console.log("CLOSING");
     if (this.togglingPanel) {
       return;
     }
