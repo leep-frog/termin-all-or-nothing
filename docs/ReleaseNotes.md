@@ -1,5 +1,10 @@
 ## Release Notes
 
+### 4.0.5
+
+- Added support with Remote SSH (by changing this extension from a web
+extension to a regular extension)
+
 ### 4.0.0
 
 - Updated listeners to fix major issues
