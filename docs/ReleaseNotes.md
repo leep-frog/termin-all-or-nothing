@@ -1,5 +1,11 @@
 ## Release Notes
 
+### 5.0.0
+
+- Updated the listener to check for editors viewing the same file. The extension
+now properly auto-closes the panel when opening a file that is already open in
+another visible editor.
+
 ### 4.0.5
 
 - Added support with Remote SSH (by changing this extension from a web

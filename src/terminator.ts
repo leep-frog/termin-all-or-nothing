@@ -38,22 +38,17 @@ function isFileUri(uri: vscode.Uri): boolean {
   return uri.scheme === "file";
 }
 
-// setDiff returns the elements that are only in setA.
-function setDiff<T>(setA: Set<T>, setB: Set<T>): Set<T> {
-  return new Set([...setA,].filter(x => !setB.has(x)));
-}
-
 export class Terminator {
 
   private togglingPanel: boolean;
   private autoClosingEnabled: boolean;
-  private previouslyVisibleEditors : Set<vscode.Uri>;
+  private previouslyVisibleEditors : VisibleEditorSet;
   private lastOpenTimeMs : number;
 
   constructor() {
     this.togglingPanel = false;
     this.autoClosingEnabled = true;
-    this.previouslyVisibleEditors = new Set(vscode.window.visibleTextEditors.map(ve => ve.document.uri));
+    this.previouslyVisibleEditors = new VisibleEditorSet(vscode.window.visibleTextEditors);
     this.lastOpenTimeMs = 0;
   }
 
@@ -68,17 +63,10 @@ export class Terminator {
     // When opening a file from the terminal, sometimes the onDidChangeTextEditorVisibleRanges
     // event doesn't fire (and sometimes it does), but this one seems to always handle that case.
     this.register(context, vscode.window.onDidChangeVisibleTextEditors((visibleEditors) => {
-      const newlyVisibleEditors = new Set(visibleEditors.map(ve => ve.document.uri));
+      const newlyVisibleEditors = new VisibleEditorSet(visibleEditors);
 
-      const addedEditors = setDiff(newlyVisibleEditors, this.previouslyVisibleEditors);
-      // const removedEditors = setDiff(this.previouslyVisibleEditors, newlyVisibleEditors);
-
-      // If a file was added, then close.
-      for (const addedEditor of addedEditors) {
-        if (isFileUri(addedEditor)) {
-          this.closePanel(false, "VisibleTextEditors");
-          break;
-        }
+      if (this.previouslyVisibleEditors.fileAdded(newlyVisibleEditors)) {
+        this.closePanel(false, "VisibleTextEditors");
       }
 
       this.previouslyVisibleEditors = newlyVisibleEditors;
@@ -186,4 +174,27 @@ export interface ExecuteArgs {
   autoCloseEnabled: boolean | undefined;
   command: string;
   args: any;
+}
+
+// Note, we don't use a regular `Set` here because sometimes
+// the same file is open in multiple editors.
+export class VisibleEditorSet {
+  private map: Map<vscode.Uri, number>;
+
+  constructor(editors: readonly vscode.TextEditor[]) {
+    this.map = new Map();
+    editors.forEach(ve => {
+      this.map.set(ve.document.uri, 1 + (this.map.get(ve.document.uri) || 0));
+    });
+  }
+
+  fileAdded(newEditors: VisibleEditorSet): boolean {
+    for (const [uri, newCount,] of newEditors.map) {
+      const prevCount = this.map.get(uri) || 0;
+      if (newCount > prevCount && isFileUri(uri)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
