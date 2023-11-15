@@ -28,13 +28,23 @@ are always fully opening or closing the panel. For example,
 There are many ways that a terminal/editor can be opened in VS Code. This
 extension has considered the following cases:
 
- - Open a file from the VS Code Command Pallete while in the panel view
- - File Explorer single-click on currently unopened file during terminal
-   focus (closes terminal)
- - File Explorer double-click on currently unopened file during terminal
-   focus (closes terminal)
- - Ctrl+click on currently unopened file in terminal (closes terminal)
- - Running `code filename.txt` from the integrated terminal on a currently unopened file in terminal (closes terminal)
+### Open from File Explorer
+
+> Opening via both single-click and double-click works.
+
+![](./docs/gifs/FileExplorerOpen.gif)
+
+### Open from Command Prompt
+
+![](./docs/gifs/PromptFromTerminal.gif)
+
+### Ctrl+click on file reference from terminal
+
+![](./docs/gifs/CtrlClickFromTerminal.gif)
+
+### Running `code new-file.txt` from the integrated terminal
+
+![](./docs/gifs/CodeCommandFromTerminal.gif)
 
 > If there are any other cases you'd like this extension to consider, please
 [open an issue for it](https://github.com/leep-frog/termin-all-or-nothing/issues).
@@ -56,4 +66,4 @@ you out!
 ## Further Reading
 
 - [Release Notes](https://github.com/leep-frog/termin-all-or-nothing/blob/main/docs/ReleaseNotes.md)
-- [FAQs (Common Issues & Solutions)](https://github.com/leep-frog/termin-all-or-nothing/blob/main/docs/FAQ.md)
+- [FAQs (Known Issues)](https://github.com/leep-frog/termin-all-or-nothing/blob/main/docs/FAQ.md)

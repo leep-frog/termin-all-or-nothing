@@ -147,6 +147,8 @@ export class Terminator {
     return this.autoClosingEnabled && Date.now() - this.lastOpenTimeMs >= AUTO_CLOSE_WAIT_THRESHOLD_MS;
   }
 
+  readonly printClosePanelID = false;
+
   async closePanel(userInitiated: boolean, id: string): Promise<void> {
     console.log("CLOSING");
     if (this.togglingPanel) {
@@ -156,6 +158,9 @@ export class Terminator {
     if (userInitiated || this.canAutoClose()) {
       this.togglingPanel = true;
       await vscode.commands.executeCommand("workbench.action.closePanel");
+      if (this.printClosePanelID) {
+        vscode.window.showInformationMessage(`Closing from ${id}`);
+      }
       this.togglingPanel = false;
     }
   }
