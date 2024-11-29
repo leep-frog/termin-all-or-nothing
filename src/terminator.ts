@@ -30,8 +30,6 @@ Tests:
 - Reload window (starting in panel), switch focus to and from output tab (should not close panel)
 - Test running go.test.package commmand and groog.message.info (with args) wrapped by execute
 
-// TODO: Track visible ranges in onDidChangeVisibleTextEditors
-// and use that info to get cases where window partially opens.
 */
 
 function isFileUri(uri: vscode.Uri): boolean {
@@ -43,12 +41,14 @@ export class Terminator {
   private togglingPanel: boolean;
   private autoClosingEnabled: boolean;
   private previouslyVisibleEditors : VisibleEditorSet;
+  private previouslyVisibleNotebooks : VisibleEditorSet;
   private lastOpenTimeMs : number;
 
   constructor() {
     this.togglingPanel = false;
     this.autoClosingEnabled = true;
-    this.previouslyVisibleEditors = new VisibleEditorSet(vscode.window.visibleTextEditors);
+    this.previouslyVisibleEditors = new VisibleEditorSet(vscode.window.visibleTextEditors.map(ve => ve.document.uri));
+    this.previouslyVisibleNotebooks = new VisibleEditorSet(vscode.window.visibleNotebookEditors.map(nb => nb.notebook.uri));
     this.lastOpenTimeMs = 0;
   }
 
@@ -63,7 +63,7 @@ export class Terminator {
     // When opening a file from the terminal, sometimes the onDidChangeTextEditorVisibleRanges
     // event doesn't fire (and sometimes it does), but this one seems to always handle that case.
     this.register(context, vscode.window.onDidChangeVisibleTextEditors((visibleEditors) => {
-      const newlyVisibleEditors = new VisibleEditorSet(visibleEditors);
+      const newlyVisibleEditors = new VisibleEditorSet(visibleEditors.map(ve => ve.document.uri));
 
       if (this.previouslyVisibleEditors.fileAdded(newlyVisibleEditors)) {
         this.closePanel(false, "VisibleTextEditors");
@@ -72,12 +72,16 @@ export class Terminator {
       this.previouslyVisibleEditors = newlyVisibleEditors;
     }));
 
-    // I don't use notebooks, but I'm assuming this is useful for those who do.
-    /*this.register(context, vscode.window.onDidChangeVisibleNotebookEditors((event) => {
-      if (!isOutputUri(event.notebookEditor.notebook.uri) && event.visibleRanges.length) {
-        this.closePanel(false, "NotebookEditorVisibleRange");
+    // Identical to above but for notebooks
+    this.register(context, vscode.window.onDidChangeVisibleNotebookEditors((visibleNotebooks) => {
+      const newlyVisibleNotebooks = new VisibleEditorSet(visibleNotebooks.map(nb => nb.notebook.uri));
+
+      if (this.previouslyVisibleNotebooks.fileAdded(newlyVisibleNotebooks)) {
+        this.closePanel(false, "VisibleNotebookEditors");
       }
-    }));*/
+
+      this.previouslyVisibleNotebooks = newlyVisibleNotebooks;
+    }));
 
     // Command registrations
     for (const cmd of openCommands) {
@@ -184,10 +188,10 @@ export interface ExecuteArgs {
 export class VisibleEditorSet {
   private map: Map<vscode.Uri, number>;
 
-  constructor(editors: readonly vscode.TextEditor[]) {
+  constructor(uris: readonly vscode.Uri[]) {
     this.map = new Map();
-    editors.forEach(ve => {
-      this.map.set(ve.document.uri, 1 + (this.map.get(ve.document.uri) || 0));
+    uris.forEach(uri => {
+      this.map.set(uri, 1 + (this.map.get(uri) || 0));
     });
   }
 
