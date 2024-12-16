@@ -59,7 +59,8 @@ and I'll do my best to respond in a timely manner.
 ## Appreciate
 
 I find it very rewarding to know that my projects made someone's day or
-developer life a little better. If you feel so inclined, leave a review
+developer life a little better. If you feel so inclined,
+[leave a review](https://marketplace.visualstudio.com/items?itemName=groogle.termin-all-or-nothing&ssr=false#review-details)
 or [buy my a coffee](https://paypal.me/sleepfrog) so I know my project helped
 you out!
 
