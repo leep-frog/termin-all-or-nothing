@@ -24,25 +24,32 @@ Tests:
 - File explorer double-click open file from terminal (partial open)
 - `code filename.txt` for an unopened file from terminal
 - `code filename.txt` for an open file from terminal (does nothing)
+- `code filename.txt` for a new file from terminal
+- `code filename.txt` for a new file that is already open from terminal (does nothing)
 - openPanel to output tab (should not close panel)
 - switch panel tab to output tab (should not close panel)
 - Reload window (starting in editor), openPanel to output tab (should not close panel)
 - Reload window (starting in panel), switch focus to and from output tab (should not close panel)
 - Test running go.test.package commmand and groog.message.info (with args) wrapped by execute
 
+Note, all test cases above also apply for notebooks
 */
 
-function isFileUri(uri: vscode.Uri): boolean {
-  return uri.scheme === "file";
+function isRelevantUri(uri: vscode.Uri): boolean {
+  return [
+    "file",
+    "vscode-notebook-cell",
+    "untitled", // VS Code scheme when a new file is created (via `code newFile.py`, for example)
+  ].includes(uri.scheme);
 }
 
 export class Terminator {
 
   private togglingPanel: boolean;
   private autoClosingEnabled: boolean;
-  private previouslyVisibleEditors : VisibleEditorSet;
-  private previouslyVisibleNotebooks : VisibleEditorSet;
-  private lastOpenTimeMs : number;
+  private previouslyVisibleEditors: VisibleEditorSet;
+  private previouslyVisibleNotebooks: VisibleEditorSet;
+  private lastOpenTimeMs: number;
 
   constructor() {
     this.togglingPanel = false;
@@ -198,7 +205,7 @@ export class VisibleEditorSet {
   fileAdded(newEditors: VisibleEditorSet): boolean {
     for (const [uri, newCount,] of newEditors.map) {
       const prevCount = this.map.get(uri) || 0;
-      if (newCount > prevCount && isFileUri(uri)) {
+      if (newCount > prevCount && isRelevantUri(uri)) {
         return true;
       }
     }
