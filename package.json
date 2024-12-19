@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/leep-frog/termin-all-or-nothing"
   },
-  "version": "5.2.1",
+  "version": "6.0.0",
   "engines": {
     "vscode": "^1.81.0"
   },
