@@ -11,7 +11,7 @@ const closeCommands = [
   extensionCommand("closePanel"),
 ];
 
-const AUTO_CLOSE_WAIT_THRESHOLD_MS = 150;
+export const AUTO_CLOSE_WAIT_THRESHOLD_MS = 150;
 
 /*
 Tests:
@@ -69,22 +69,22 @@ export class Terminator {
     // This triggers when the set of visible text editors (including output panel view) changes.
     // When opening a file from the terminal, sometimes the onDidChangeTextEditorVisibleRanges
     // event doesn't fire (and sometimes it does), but this one seems to always handle that case.
-    this.register(context, vscode.window.onDidChangeVisibleTextEditors((visibleEditors) => {
+    this.register(context, vscode.window.onDidChangeVisibleTextEditors(async (visibleEditors) => {
       const newlyVisibleEditors = new VisibleEditorSet(visibleEditors.map(ve => ve.document.uri));
 
       if (this.previouslyVisibleEditors.fileAdded(newlyVisibleEditors)) {
-        this.closePanel(false, "VisibleTextEditors");
+        await this.closePanel(false, "VisibleTextEditors");
       }
 
       this.previouslyVisibleEditors = newlyVisibleEditors;
     }));
 
     // Identical to above but for notebooks
-    this.register(context, vscode.window.onDidChangeVisibleNotebookEditors((visibleNotebooks) => {
+    this.register(context, vscode.window.onDidChangeVisibleNotebookEditors(async (visibleNotebooks) => {
       const newlyVisibleNotebooks = new VisibleEditorSet(visibleNotebooks.map(nb => nb.notebook.uri));
 
       if (this.previouslyVisibleNotebooks.fileAdded(newlyVisibleNotebooks)) {
-        this.closePanel(false, "VisibleNotebookEditors");
+        await this.closePanel(false, "VisibleNotebookEditors");
       }
 
       this.previouslyVisibleNotebooks = newlyVisibleNotebooks;
@@ -92,11 +92,11 @@ export class Terminator {
 
     // Command registrations
     for (const cmd of openCommands) {
-      this.registerCommand(context, cmd, () => this.openPanel());
+      this.registerCommand(context, cmd, async () => this.openPanel());
     }
 
     for (const cmd of closeCommands) {
-      this.registerCommand(context, cmd, () => this.closePanel(true, "CMD:" + cmd));
+      this.registerCommand(context, cmd, async () => this.closePanel(true, "CMD:" + cmd));
     }
 
     // Old implementation learnings
@@ -157,8 +157,6 @@ export class Terminator {
     return this.autoClosingEnabled && Date.now() - this.lastOpenTimeMs >= AUTO_CLOSE_WAIT_THRESHOLD_MS;
   }
 
-  readonly printClosePanelID = false;
-
   async closePanel(userInitiated: boolean, id: string): Promise<void> {
     if (this.togglingPanel) {
       return;
@@ -167,7 +165,7 @@ export class Terminator {
     if (userInitiated || this.canAutoClose()) {
       this.togglingPanel = true;
       await vscode.commands.executeCommand("workbench.action.closePanel");
-      if (this.printClosePanelID) {
+      if (process.env.TERMIN_ALL_OR_NOTHING_TEST) {
         vscode.window.showInformationMessage(`Closing from ${id}`);
       }
       this.togglingPanel = false;
@@ -190,6 +188,18 @@ export interface ExecuteArgs {
   args: any;
 }
 
+function mapReplacer(key: any, value: any) {
+  if (value instanceof Map) {
+    return {
+      dataType: 'Map',
+      value: [...value],
+      // value: Array.from(value.entries()), // or with spread:
+    };
+  } else {
+    return value;
+  }
+}
+
 // Note, we don't use a regular `Set` here because sometimes
 // the same file is open in multiple editors.
 export class VisibleEditorSet {
@@ -200,6 +210,10 @@ export class VisibleEditorSet {
     uris.forEach(uri => {
       this.map.set(uri, 1 + (this.map.get(uri) || 0));
     });
+  }
+
+  toJSON(): string {
+    return JSON.stringify(this.map, mapReplacer);
   }
 
   fileAdded(newEditors: VisibleEditorSet): boolean {
