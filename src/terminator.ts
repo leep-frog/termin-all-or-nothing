@@ -61,9 +61,6 @@ export class Terminator {
 
   activate(context: vscode.ExtensionContext) {
 
-    this.registerCommand(context, extensionCommand("autoClosePanel.enable"), () => this.setAutoClose(true));
-    this.registerCommand(context, extensionCommand("autoClosePanel.disable"), () => this.setAutoClose(false));
-
     this.registerCommand(context, extensionCommand("execute"), (args: ExecuteArgs) => this.execute(args));
 
     // This triggers when the set of visible text editors (including output panel view) changes.
@@ -138,10 +135,6 @@ export class Terminator {
     this.register(context, vscode.commands.registerCommand(commandName, callback));
   }
 
-  async setAutoClose(value: boolean): Promise<void> {
-    this.autoClosingEnabled = value;
-  }
-
   async openPanel(): Promise<void> {
     if (this.togglingPanel) {
       return;
@@ -173,17 +166,16 @@ export class Terminator {
   }
 
   async execute(args: ExecuteArgs) {
-    const oldValue: boolean = this.autoClosingEnabled;
-    this.autoClosingEnabled = !!args.autoCloseEnabled;
-
-    await vscode.commands.executeCommand(args.command, args.args);
-
-    this.autoClosingEnabled = oldValue;
+    this.autoClosingEnabled = false;
+    try {
+      await vscode.commands.executeCommand(args.command, args.args);
+    } finally {
+      this.autoClosingEnabled = true;
+    }
   }
 }
 
 export interface ExecuteArgs {
-  autoCloseEnabled: boolean | undefined;
   command: string;
   args: any;
 }
@@ -193,7 +185,6 @@ function mapReplacer(key: any, value: any) {
     return {
       dataType: 'Map',
       value: [...value],
-      // value: Array.from(value.entries()), // or with spread:
     };
   } else {
     return value;
@@ -213,7 +204,7 @@ export class VisibleEditorSet {
   }
 
   toJSON(): string {
-    return JSON.stringify(this.map, mapReplacer);
+    return JSON.stringify(this.map, mapReplacer, 2);
   }
 
   fileAdded(newEditors: VisibleEditorSet): boolean {
