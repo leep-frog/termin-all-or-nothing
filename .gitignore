@@ -5,3 +5,4 @@ node_modules
 *.vsix
 coverage/
 .vscode-test/
+bundled-out/

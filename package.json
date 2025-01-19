@@ -19,7 +19,7 @@
     "onStartupFinished",
     "onCommand:termin-all-or-nothing.autoClosePanel.execute"
   ],
-  "main": "./out/extension.js",
+  "main": "./bundled-out/extension.js",
   "contributes": {
     "commands": [
       {
@@ -38,13 +38,17 @@
     "keybindings": []
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "lint": "eslint src",
-    "pretest": "npm run compile",
+    "esbuild": "npm run esbuild-base -- --sourcemap",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=bundled-out/extension.js --external:vscode --format=cjs --platform=node",
+    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+    "lint": "eslint src --fix --ext ts",
+    "posttest": "echo 'Open the following file for html coverage report:\nfile:///C:/Users/gleep/Desktop/Coding/vs-code/termin-all-or-nothing/coverage/src/index.html'",
+    "pretest": "npm run compile && npm run esbuild",
     "test": "vscode-test --coverage --coverageReporter lcov --coverageReporter html",
-    "posttest": "echo 'Open the following file for html coverage report:\nfile:///C:/Users/gleep/Desktop/Coding/vs-code/very-import-ant/coverage/index.html'"
+    "test-compile": "tsc -p ./",
+    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "watch": "tsc -watch -p ./"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
@@ -55,6 +59,7 @@
     "@typescript-eslint/parser": "^8.17.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
+    "esbuild": "^0.20.1",
     "eslint": "^9.16.0",
     "typescript": "^5.7.2"
   },
