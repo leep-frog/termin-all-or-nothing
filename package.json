@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/leep-frog/termin-all-or-nothing"
   },
-  "version": "6.0.2",
+  "version": "6.0.3",
   "engines": {
     "vscode": "^1.81.0"
   },
@@ -47,7 +47,7 @@
     "pretest": "npm run compile && npm run esbuild",
     "test": "vscode-test --coverage --coverageReporter lcov --coverageReporter html",
     "test-compile": "tsc -p ./",
-    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "vscode:prepublish": "npm run test && npm run esbuild-base -- --minify",
     "watch": "tsc -watch -p ./"
   },
   "devDependencies": {
