@@ -169,6 +169,7 @@ export class Terminator {
     this.autoClosingEnabled = false;
     try {
       await vscode.commands.executeCommand(args.command, args.args);
+    } catch {
     } finally {
       this.autoClosingEnabled = true;
     }

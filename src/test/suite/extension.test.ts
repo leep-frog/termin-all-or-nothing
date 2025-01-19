@@ -15,10 +15,8 @@ interface TestCase {
   runSolo?: boolean;
 }
 
-const tmpWorkspace: string = process.env.TERMIN_ALL_TEST_WORKSPACE!;
-
 function getUri(...filename: string[]): vscode.Uri {
-  const p = path.resolve(tmpWorkspace, path.join(...filename));
+  const p = path.resolve(__dirname, "..", "..", "..", "src", "test", "test-workspace", path.join(...filename));
   return vscode.Uri.file(p);
 }
 
@@ -231,7 +229,7 @@ suite('Miscellaneous tests', () => {
       "    [",
       "      {",
       "        \\\"$mid\\\": 1,",
-      "        \\\"path\\\": \\\"/C:/Users/gleep/Desktop/Coding/vs-code/termin-all-or-nothing/src/test/test-workspace/simple.py\\\",",
+      `        \\\"path\\\": \\\"/${getUri('simple.py').fsPath.replace(/\\/g, "/")}\\\",`,
       "        \\\"scheme\\\": \\\"file\\\"",
       "      },",
       "      1",
@@ -239,7 +237,7 @@ suite('Miscellaneous tests', () => {
       "    [",
       "      {",
       "        \\\"$mid\\\": 1,",
-      "        \\\"path\\\": \\\"/C:/Users/gleep/Desktop/Coding/vs-code/termin-all-or-nothing/src/test/test-workspace/notebook.ipynb\\\",",
+      `        \\\"path\\\": \\\"/${getUri('notebook.ipynb').fsPath.replace(/\\/g, "/")}\\\",`,
       "        \\\"scheme\\\": \\\"file\\\"",
       "      },",
       "      1",
@@ -248,6 +246,6 @@ suite('Miscellaneous tests', () => {
       "}\"",
     ];
 
-    assert.deepStrictEqual(want, got);
+    assert.deepStrictEqual(got, want);
   });
 });

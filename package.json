@@ -1,13 +1,13 @@
 {
   "name": "termin-all-or-nothing",
-  "displayName": "termin-all-or-nothing",
+  "displayName": "Termin-All-or-Nothing",
   "description": "Prevent cyborg editors (half-editor, half-terminal).",
   "publisher": "groogle",
   "repository": {
     "type": "git",
     "url": "https://github.com/leep-frog/termin-all-or-nothing"
   },
-  "version": "6.0.0",
+  "version": "6.0.1",
   "engines": {
     "vscode": "^1.81.0"
   },
