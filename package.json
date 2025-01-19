@@ -43,7 +43,7 @@
     "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=bundled-out/extension.js --external:vscode --format=cjs --platform=node",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
     "lint": "eslint src --fix --ext ts",
-    "posttest": "echo 'Open the following file for html coverage report:\nfile:///C:/Users/gleep/Desktop/Coding/vs-code/termin-all-or-nothing/coverage/src/index.html'",
+    "posttest": "echo 'Open the following file for html coverage report:\nfile:///C:/Users/gleep/Desktop/Coding/vs-code/termin-all-or-nothing/coverage/index.html'",
     "pretest": "npm run compile && npm run esbuild",
     "test": "vscode-test --coverage --coverageReporter lcov --coverageReporter html",
     "test-compile": "tsc -p ./",
