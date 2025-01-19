@@ -8,9 +8,8 @@ import path = require("path");
 import assert = require("assert");
 // import * as myExtension from '../../extension';
 
-interface TestCase {
+interface TestCase extends SimpleTestCaseProps {
   name: string;
-  stc: SimpleTestCaseProps;
   waitForMessages?: string[];
   runSolo?: boolean;
 }
@@ -44,135 +43,121 @@ const MAX_WAIT = 2500;
 const testCases: TestCase[] = [
   {
     name: "Auto-closes the panel when an existing file is opened",
-    stc: {
-      userInteractions: [
-        cmd("termin-all-or-nothing.openPanel"),
-        delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
-        openTestWorkspaceFile("simple.py"),
-        new Waiter(10, () => !!vscode.window.activeTextEditor && path.basename(vscode.window.activeTextEditor.document.uri.fsPath) === "simple.py", 100),
+    userInteractions: [
+      cmd("termin-all-or-nothing.openPanel"),
+      delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
+      openTestWorkspaceFile("simple.py"),
+      new Waiter(10, () => !!vscode.window.activeTextEditor && path.basename(vscode.window.activeTextEditor.document.uri.fsPath) === "simple.py", 100),
+    ],
+    expectedText: [simpleText],
+    informationMessage: {
+      ignoreOrder: true,
+      expectedMessages: [
+        `Closing from VisibleTextEditors`,
       ],
-      expectedText: [simpleText],
-      informationMessage: {
-        ignoreOrder: true,
-        expectedMessages: [
-          `Closing from VisibleTextEditors`,
-        ],
-      },
     },
   },
   {
     name: "Auto-closes the panel when an existing notebook is opened",
-    stc: {
-      userInteractions: [
-        cmd("termin-all-or-nothing.openPanel"),
-        delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
-        openTestWorkspaceFile("notebook.ipynb"),
-        new Waiter(10, () => !!vscode.window.activeNotebookEditor && path.basename(vscode.window.activeNotebookEditor.notebook.uri.fsPath) === "notebook.ipynb", 100),
+    userInteractions: [
+      cmd("termin-all-or-nothing.openPanel"),
+      delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
+      openTestWorkspaceFile("notebook.ipynb"),
+      new Waiter(10, () => !!vscode.window.activeNotebookEditor && path.basename(vscode.window.activeNotebookEditor.notebook.uri.fsPath) === "notebook.ipynb", 100),
+    ],
+    expectedText: [notebookText],
+    informationMessage: {
+      ignoreOrder: true,
+      expectedMessages: [
+        `Closing from VisibleTextEditors`,
+        `Closing from VisibleNotebookEditors`,
       ],
-      expectedText: [notebookText],
-      informationMessage: {
-        ignoreOrder: true,
-        expectedMessages: [
-          `Closing from VisibleTextEditors`,
-          `Closing from VisibleNotebookEditors`,
-        ],
-      },
     },
   },
   {
     name: "Auto-closes the panel when a new, untitled file is opened",
-    stc: {
-      userInteractions: [
-        cmd("termin-all-or-nothing.openPanel"),
-        delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
-        cmd("workbench.action.files.newUntitledFile"),
-        new Waiter(10, () => {
-          return !!vscode.window.activeTextEditor && path.basename(vscode.window.activeTextEditor.document.uri.fsPath) === "Untitled-1";
-        }, 100),
+    userInteractions: [
+      cmd("termin-all-or-nothing.openPanel"),
+      delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
+      cmd("workbench.action.files.newUntitledFile"),
+      new Waiter(10, () => {
+        return !!vscode.window.activeTextEditor && path.basename(vscode.window.activeTextEditor.document.uri.fsPath) === "Untitled-1";
+      }, 100),
+    ],
+    expectedText: [""],
+    informationMessage: {
+      ignoreOrder: true,
+      expectedMessages: [
+        `Closing from VisibleTextEditors`,
       ],
-      expectedText: [""],
-      informationMessage: {
-        ignoreOrder: true,
-        expectedMessages: [
-          `Closing from VisibleTextEditors`,
-        ],
-      },
     },
   },
   {
     name: "Auto-closes the panel when a new, untitled notebook is opened",
-    stc: {
-      userInteractions: [
-        cmd("termin-all-or-nothing.openPanel"),
-        delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
-        cmd("ipynb.newUntitledIpynb"),
-        new Waiter(10, () => {
-          console.log(`WTF: ${path.basename(vscode.window.activeTextEditor?.document.uri.fsPath || "blop")}`);
-          return !!vscode.window.activeTextEditor && path.basename(vscode.window.activeTextEditor.document.uri.fsPath) === "Untitled-1.ipynb"
-        }, 100),
+    userInteractions: [
+      cmd("termin-all-or-nothing.openPanel"),
+      delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
+      cmd("ipynb.newUntitledIpynb"),
+      new Waiter(10, () => {
+        console.log(`WTF: ${path.basename(vscode.window.activeTextEditor?.document.uri.fsPath || "blop")}`);
+        return !!vscode.window.activeTextEditor && path.basename(vscode.window.activeTextEditor.document.uri.fsPath) === "Untitled-1.ipynb"
+      }, 100),
+    ],
+    expectedText: [""],
+    informationMessage: {
+      ignoreOrder: true,
+      expectedMessages: [
+        `Closing from VisibleNotebookEditors`,
+        `Closing from VisibleTextEditors`,
       ],
-      expectedText: [""],
-      informationMessage: {
-        ignoreOrder: true,
-        expectedMessages: [
-          `Closing from VisibleNotebookEditors`,
-          `Closing from VisibleTextEditors`,
-        ],
-      },
     },
   },
   {
     name: "Panel is not auto-closed when wrapped in execute command",
-    stc: {
-      userInteractions: [
-        cmd("termin-all-or-nothing.openPanel"),
-        delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
-        cmd("termin-all-or-nothing.execute", {
-          command: "vscode.open",
-          args: getUri("simple.py"),
-        }),
-        new Waiter(10, () => !!vscode.window.activeTextEditor && path.basename(vscode.window.activeTextEditor.document.uri.fsPath) === "simple.py", 100),
-      ],
-      expectedText: [simpleText],
-      informationMessage: {
-        ignoreOrder: true,
-        expectedMessages: [],
-      },
+    userInteractions: [
+      cmd("termin-all-or-nothing.openPanel"),
+      delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
+      cmd("termin-all-or-nothing.execute", {
+        command: "vscode.open",
+        args: getUri("simple.py"),
+      }),
+      new Waiter(10, () => !!vscode.window.activeTextEditor && path.basename(vscode.window.activeTextEditor.document.uri.fsPath) === "simple.py", 100),
+    ],
+    expectedText: [simpleText],
+    informationMessage: {
+      ignoreOrder: true,
+      expectedMessages: [],
     },
   },
   {
     name: "Handles exception in wrapped in execute command",
-    stc: {
-      userInteractions: [
-        cmd("termin-all-or-nothing.openPanel"),
-        delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
-        cmd("termin-all-or-nothing.execute", {
-          command: "idk.command",
-        }),
-      ],
-      informationMessage: {
-        ignoreOrder: true,
-        expectedMessages: [],
-      },
+    userInteractions: [
+      cmd("termin-all-or-nothing.openPanel"),
+      delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
+      cmd("termin-all-or-nothing.execute", {
+        command: "idk.command",
+      }),
+    ],
+    informationMessage: {
+      ignoreOrder: true,
+      expectedMessages: [],
     },
   },
   {
     name: "No auto-close if within AUTO_CLOSE_WAIT_THRESHOLD_MS",
-    stc: {
-      userInteractions: [
-        cmd("termin-all-or-nothing.openPanel"),
-        delay(AUTO_CLOSE_WAIT_THRESHOLD_MS - 100),
-        openTestWorkspaceFile("simple.py"),
-        new Waiter(10, () => !!vscode.window.activeTextEditor && path.basename(vscode.window.activeTextEditor.document.uri.fsPath) === "simple.py", 100),
-        // Give some time for things to run since we don't wait on messages.
-        // If we didn't wait, then this might always pass even if the test was broken!
-        delay(2 * AUTO_CLOSE_WAIT_THRESHOLD_MS),
-      ],
-      expectedText: [simpleText],
-      informationMessage: {
-        ignoreOrder: true,
-        expectedMessages: [],
-      },
+    userInteractions: [
+      cmd("termin-all-or-nothing.openPanel"),
+      delay(AUTO_CLOSE_WAIT_THRESHOLD_MS - 100),
+      openTestWorkspaceFile("simple.py"),
+      new Waiter(10, () => !!vscode.window.activeTextEditor && path.basename(vscode.window.activeTextEditor.document.uri.fsPath) === "simple.py", 100),
+      // Give some time for things to run since we don't wait on messages.
+      // If we didn't wait, then this might always pass even if the test was broken!
+      delay(2 * AUTO_CLOSE_WAIT_THRESHOLD_MS),
+    ],
+    expectedText: [simpleText],
+    informationMessage: {
+      ignoreOrder: true,
+      expectedMessages: [],
     },
   },
 ];
@@ -191,22 +176,22 @@ suite("Extension Test Suite", () => {
         return oldInfo(msg);
       };
 
-      if (!tc.stc.userInteractions) {
-        tc.stc.userInteractions = [];
+      if (!tc.userInteractions) {
+        tc.userInteractions = [];
       }
 
-      tc.stc.userInteractions.unshift(closeAllEditors);
+      tc.userInteractions.unshift(closeAllEditors);
 
       const msDelay = 100;
-      const wfms = tc.stc.informationMessage?.expectedMessages;
+      const wfms = tc.informationMessage?.expectedMessages;
       if (wfms?.length) {
-        tc.stc.userInteractions.push(new Waiter(msDelay, () => {
+        tc.userInteractions.push(new Waiter(msDelay, () => {
           return wfms?.length === gotInfoMessages.length && wfms.reduce((previousValue: boolean, currentValue: string) => previousValue && gotInfoMessages.includes(currentValue), true);
         }, MAX_WAIT / msDelay));
       }
 
       // Run test
-      await new SimpleTestCase(tc.stc).runTest().catch((e: any) => {
+      await new SimpleTestCase(tc).runTest().catch((e: any) => {
         throw e;
       });
     });
