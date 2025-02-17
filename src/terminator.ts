@@ -174,7 +174,7 @@ export class Terminator {
       // Before closing the panel, we move it down a little bit so that the panel
       // isn't as high as it can be (which would cause all visible ranges in cyborg mode
       // to be one line which would prevent 'Solution 2' from working).
-      await vscode.commands.executeCommand("workbench.action.terminal.resizePaneDown");
+      vscode.commands.executeCommand("workbench.action.terminal.resizePaneDown");
 
       await vscode.commands.executeCommand("workbench.action.closePanel");
       if (process.env.TERMIN_ALL_OR_NOTHING_TEST) {
