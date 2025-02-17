@@ -257,10 +257,10 @@ export class PanelStateTracker {
     // Considered inPanel if every visible range in every visible editor is a single line.
     const nowInPanel = visibleTextEditors.every(editor => editor.visibleRanges.every(this.minimalRange));
 
-    const closePanel = (this.inPanel && !nowInPanel);
+    const shouldClosePanel = (this.inPanel && !nowInPanel);
 
     this.inPanel = nowInPanel;
-    return closePanel;
+    return shouldClosePanel;
   }
 
   private minimalRange(range: vscode.Range) {
