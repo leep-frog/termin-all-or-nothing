@@ -64,8 +64,7 @@ const testCases: TestCase[] = [
   {
     name: "Auto-closes the panel when an existing file is opened",
     userInteractions: [
-      cmd("termin-all-or-nothing.openPanel"),
-      delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
+      cmd("termin-all-or-nothing.openPanel"), delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
       openTestWorkspaceFile("simple.py"),
       new Waiter(10, () => !!vscode.window.activeTextEditor && path.basename(vscode.window.activeTextEditor.document.uri.fsPath) === "simple.py", 100),
     ],
@@ -80,8 +79,7 @@ const testCases: TestCase[] = [
   {
     name: "Auto-closes the panel when an existing notebook is opened",
     userInteractions: [
-      cmd("termin-all-or-nothing.openPanel"),
-      delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
+      cmd("termin-all-or-nothing.openPanel"), delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
       openTestWorkspaceFile("notebook.ipynb"),
       new Waiter(10, () => !!vscode.window.activeNotebookEditor && path.basename(vscode.window.activeNotebookEditor.notebook.uri.fsPath) === "notebook.ipynb", 100),
     ],
@@ -97,8 +95,7 @@ const testCases: TestCase[] = [
   {
     name: "Auto-closes the panel when a new, untitled file is opened",
     userInteractions: [
-      cmd("termin-all-or-nothing.openPanel"),
-      delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
+      cmd("termin-all-or-nothing.openPanel"), delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
       cmd("workbench.action.files.newUntitledFile"),
       new Waiter(10, () => {
         return !!vscode.window.activeTextEditor && path.basename(vscode.window.activeTextEditor.document.uri.fsPath) === "Untitled-1";
@@ -115,8 +112,7 @@ const testCases: TestCase[] = [
   {
     name: "Auto-closes the panel when a new, untitled notebook is opened",
     userInteractions: [
-      cmd("termin-all-or-nothing.openPanel"),
-      delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
+      cmd("termin-all-or-nothing.openPanel"), delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
       cmd("ipynb.newUntitledIpynb"),
       new Waiter(10, () => {
         return !!vscode.window.activeTextEditor && path.basename(vscode.window.activeTextEditor.document.uri.fsPath) === "Untitled-1.ipynb"
@@ -203,8 +199,8 @@ const testCases: TestCase[] = [
   {
     name: "Panel is not auto-closed when wrapped in execute command",
     userInteractions: [
-      cmd("termin-all-or-nothing.openPanel"),
-      delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
+      cmd("termin-all-or-nothing.openPanel"), delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
+
       cmd("termin-all-or-nothing.execute", {
         command: "vscode.open",
         args: getUri("simple.py"),
@@ -220,8 +216,8 @@ const testCases: TestCase[] = [
   {
     name: "Handles exception in wrapped in execute command",
     userInteractions: [
-      cmd("termin-all-or-nothing.openPanel"),
-      delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
+      cmd("termin-all-or-nothing.openPanel"), delay(AUTO_CLOSE_WAIT_THRESHOLD_MS),
+
       cmd("termin-all-or-nothing.execute", {
         command: "idk.command",
       }),
