@@ -23,9 +23,9 @@ Tests:
 - File explorer single-click open file from terminal (does nothing)
 - File explorer double-click open file from terminal (partial open)
 - `code filename.txt` for an unopened file from terminal
-- `code filename.txt` for an open file from terminal (does nothing)
+- `code filename.txt` for an open file from terminal
 - `code filename.txt` for a new file from terminal
-- `code filename.txt` for a new file that is already open from terminal (does nothing)
+- `code filename.txt` for a new file that is already open from terminal
 - openPanel to output tab (should not close panel)
 - switch panel tab to output tab (should not close panel)
 - Reload window (starting in editor), openPanel to output tab (should not close panel)
@@ -50,6 +50,7 @@ export class Terminator {
   private previouslyVisibleEditors: VisibleEditorSet;
   private previouslyVisibleNotebooks: VisibleEditorSet;
   private lastOpenTimeMs: number;
+  private panelStateTracker: PanelStateTracker;
 
   constructor() {
     this.togglingPanel = false;
@@ -57,6 +58,7 @@ export class Terminator {
     this.previouslyVisibleEditors = new VisibleEditorSet(vscode.window.visibleTextEditors.map(ve => ve.document.uri));
     this.previouslyVisibleNotebooks = new VisibleEditorSet(vscode.window.visibleNotebookEditors.map(nb => nb.notebook.uri));
     this.lastOpenTimeMs = 0;
+    this.panelStateTracker = new PanelStateTracker();
   }
 
   activate(context: vscode.ExtensionContext) {
@@ -67,6 +69,10 @@ export class Terminator {
     // When opening a file from the terminal, sometimes the onDidChangeTextEditorVisibleRanges
     // event doesn't fire (and sometimes it does), but this one seems to always handle that case.
     this.register(context, vscode.window.onDidChangeVisibleTextEditors(async (visibleEditors) => {
+      // Note: we don't check the response value here because the below logic will take care of closing the panel as needed.
+      // But, we do call it because we want to make sure that the tracker is as up to date as it can be.
+      this.panelStateTracker.update(visibleEditors);
+
       const newlyVisibleEditors = new VisibleEditorSet(visibleEditors.map(ve => ve.document.uri));
 
       if (this.previouslyVisibleEditors.fileAdded(newlyVisibleEditors)) {
@@ -95,6 +101,14 @@ export class Terminator {
     for (const cmd of closeCommands) {
       this.registerCommand(context, cmd, async () => this.closePanel(true, "CMD:" + cmd));
     }
+
+    // Solution 2: https://github.com/leep-frog/termin-all-or-nothing/issues/3#issuecomment-2661728835
+    // This is intended to cover the case where the user focuses on an a file that is already present in an editor.
+    this.register(context, vscode.window.onDidChangeTextEditorVisibleRanges(async (event) => {
+      if (this.panelStateTracker.update(vscode.window.visibleTextEditors)) {
+        await this.closePanel(false, "PanelStateTracker - TextEditors");
+      }
+    })); // TODO: Add same thing for notebooks
 
     // Old implementation learnings
 
@@ -157,6 +171,11 @@ export class Terminator {
 
     if (userInitiated || this.canAutoClose()) {
       this.togglingPanel = true;
+      // Before closing the panel, we move it down a little bit so that the panel
+      // isn't as high as it can be (which would cause all visible ranges in cyborg mode
+      // to be one line which would prevent 'Solution 2' from working).
+      await vscode.commands.executeCommand("workbench.action.terminal.resizePaneDown");
+
       await vscode.commands.executeCommand("workbench.action.closePanel");
       if (process.env.TERMIN_ALL_OR_NOTHING_TEST) {
         vscode.window.showInformationMessage(`Closing from ${id}`);
@@ -208,13 +227,43 @@ export class VisibleEditorSet {
     return JSON.stringify(this.map, mapReplacer, 2);
   }
 
+  // fileAdded returns whether or not the new set of editors
+  // includes a file that is not included in the existing
+  // set of editors (aka `this`).
   fileAdded(newEditors: VisibleEditorSet): boolean {
     for (const [uri, newCount,] of newEditors.map) {
+      // TODO: add test when multiple editors with the same file
       const prevCount = this.map.get(uri) || 0;
       if (newCount > prevCount && isRelevantUri(uri)) {
         return true;
       }
     }
     return false;
+  }
+}
+
+export class PanelStateTracker {
+  inPanel: boolean;
+
+  constructor() {
+    this.inPanel = false; // This gets set by the next line. Just need this here to satisfy non-optional assumption by typescript.
+
+    // TODO: add visibleNotebookEditors too
+    this.update(vscode.window.visibleTextEditors)
+  }
+
+  // update updates the state of this object and returns whether or not the panel should be closed.
+  update(visibleTextEditors: readonly vscode.TextEditor[]): boolean {
+    // Considered inPanel if every visible range in every visible editor is a single line.
+    const nowInPanel = visibleTextEditors.every(editor => editor.visibleRanges.every(this.minimalRange));
+
+    const closePanel = (this.inPanel && !nowInPanel);
+
+    this.inPanel = nowInPanel;
+    return closePanel;
+  }
+
+  private minimalRange(range: vscode.Range) {
+    return range.start.line === range.end.line;
   }
 }
