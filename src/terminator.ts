@@ -259,6 +259,13 @@ export class PanelStateTracker {
 
     const shouldClosePanel = (this.inPanel && !nowInPanel);
 
+    if (this.inPanel !== nowInPanel) {
+      console.log(`PanelState change (to ${nowInPanel}):`);
+      for (const visibleTextEditor of visibleTextEditors) {
+        console.log(`${visibleTextEditor.document.fileName}: ${JSON.stringify(visibleTextEditor.visibleRanges)}`);
+      }
+    }
+
     this.inPanel = nowInPanel;
     return shouldClosePanel;
   }
