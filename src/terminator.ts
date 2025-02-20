@@ -51,6 +51,7 @@ export class Terminator {
   private previouslyVisibleNotebooks: VisibleEditorSet;
   private lastOpenTimeMs: number;
   private panelStateTracker: PanelStateTracker;
+  private outputChannel: vscode.OutputChannel;
 
   constructor() {
     this.togglingPanel = false;
@@ -58,7 +59,8 @@ export class Terminator {
     this.previouslyVisibleEditors = new VisibleEditorSet(vscode.window.visibleTextEditors.map(ve => ve.document.uri));
     this.previouslyVisibleNotebooks = new VisibleEditorSet(vscode.window.visibleNotebookEditors.map(nb => nb.notebook.uri));
     this.lastOpenTimeMs = 0;
-    this.panelStateTracker = new PanelStateTracker();
+    this.outputChannel = vscode.window.createOutputChannel("termin-all-or-nothing");
+    this.panelStateTracker = new PanelStateTracker(this.outputChannel);
   }
 
   activate(context: vscode.ExtensionContext) {
@@ -244,9 +246,11 @@ export class VisibleEditorSet {
 
 export class PanelStateTracker {
   inPanel: boolean;
+  outputChannel: vscode.OutputChannel
 
-  constructor() {
+  constructor(outputChannel: vscode.OutputChannel) {
     this.inPanel = false; // This gets set by the next line. Just need this here to satisfy non-optional assumption by typescript.
+    this.outputChannel = outputChannel;
 
     // TODO: add visibleNotebookEditors too
     this.update(vscode.window.visibleTextEditors)
@@ -260,9 +264,9 @@ export class PanelStateTracker {
     const shouldClosePanel = (this.inPanel && !nowInPanel);
 
     if (this.inPanel !== nowInPanel) {
-      console.log(`PanelState change (to ${nowInPanel}):`);
+      this.outputChannel.appendLine(`PanelState change (to ${nowInPanel}):`);
       for (const visibleTextEditor of visibleTextEditors) {
-        console.log(`${visibleTextEditor.document.fileName}: ${JSON.stringify(visibleTextEditor.visibleRanges)}`);
+        this.outputChannel.appendLine(`${visibleTextEditor.document.fileName}: ${JSON.stringify(visibleTextEditor.visibleRanges)}`);
       }
     }
 
