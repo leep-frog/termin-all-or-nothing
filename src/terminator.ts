@@ -43,6 +43,27 @@ function isRelevantUri(uri: vscode.Uri): boolean {
   ].includes(uri.scheme);
 }
 
+class TruncatedOutputChannel {
+
+  private outputChannel: vscode.OutputChannel;
+  private logs: string[];
+
+  constructor(outputChannel: vscode.OutputChannel) {
+    this.outputChannel = outputChannel;
+    this.logs = [];
+  }
+
+  log(message: string) {
+    this.logs.push(message);
+    if (this.logs.length > 1000) {
+      this.logs = this.logs.slice(900);
+      this.outputChannel.replace(this.logs.join("\n"))
+    } else {
+      this.outputChannel.appendLine(message);
+    }
+  }
+}
+
 export class Terminator {
 
   private togglingPanel: boolean;
@@ -51,7 +72,7 @@ export class Terminator {
   private previouslyVisibleNotebooks: VisibleEditorSet;
   private lastOpenTimeMs: number;
   private panelStateTracker: PanelStateTracker;
-  private outputChannel: vscode.OutputChannel;
+  private outputChannel: TruncatedOutputChannel;
 
   constructor() {
     this.togglingPanel = false;
@@ -59,7 +80,7 @@ export class Terminator {
     this.previouslyVisibleEditors = new VisibleEditorSet(vscode.window.visibleTextEditors.map(ve => ve.document.uri));
     this.previouslyVisibleNotebooks = new VisibleEditorSet(vscode.window.visibleNotebookEditors.map(nb => nb.notebook.uri));
     this.lastOpenTimeMs = 0;
-    this.outputChannel = vscode.window.createOutputChannel("termin-all-or-nothing");
+    this.outputChannel = new TruncatedOutputChannel(vscode.window.createOutputChannel("termin-all-or-nothing"));
     this.panelStateTracker = new PanelStateTracker(this.outputChannel);
   }
 
@@ -246,9 +267,9 @@ export class VisibleEditorSet {
 
 export class PanelStateTracker {
   inPanel: boolean;
-  outputChannel: vscode.OutputChannel
+  outputChannel: TruncatedOutputChannel;
 
-  constructor(outputChannel: vscode.OutputChannel) {
+  constructor(outputChannel: TruncatedOutputChannel) {
     this.inPanel = false; // This gets set by the next line. Just need this here to satisfy non-optional assumption by typescript.
     this.outputChannel = outputChannel;
 
@@ -264,9 +285,9 @@ export class PanelStateTracker {
     const shouldClosePanel = (this.inPanel && !nowInPanel);
 
     if (this.inPanel !== nowInPanel) {
-      this.outputChannel.appendLine(`PanelState change (to ${nowInPanel}):`);
+      this.outputChannel.log(`PanelState change (to ${nowInPanel}):`);
       for (const visibleTextEditor of visibleTextEditors) {
-        this.outputChannel.appendLine(`${visibleTextEditor.document.fileName}: ${JSON.stringify(visibleTextEditor.visibleRanges)}`);
+        this.outputChannel.log(`${visibleTextEditor.document.fileName}: ${JSON.stringify(visibleTextEditor.visibleRanges)}`);
       }
     }
 

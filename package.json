@@ -10,7 +10,7 @@
   "extensionKind": [
     "ui"
   ],
-  "version": "6.1.5",
+  "version": "6.1.6",
   "engines": {
     "vscode": "^1.81.0"
   },
