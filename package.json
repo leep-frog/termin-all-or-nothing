@@ -10,7 +10,7 @@
   "extensionKind": [
     "ui"
   ],
-  "version": "6.1.6",
+  "version": "6.2.0",
   "engines": {
     "vscode": "^1.81.0"
   },
@@ -38,6 +38,15 @@
         "title": "Termin-All-Or-Nothing: Execute a command wrapped with termin-all-or-nothing options specified"
       }
     ],
+    "configuration": {
+      "properties": {
+        "termin-all-or-nothing.output.enable": {
+          "default": false,
+          "description": "Whether or not to send info to the extension's output channel",
+          "type": "boolean"
+        }
+      }
+    },
     "keybindings": []
   },
   "scripts": {

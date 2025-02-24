@@ -47,17 +47,28 @@ class TruncatedOutputChannel {
 
   private outputChannel: vscode.OutputChannel;
   private logs: string[];
+  enabled: boolean;
 
   constructor(outputChannel: vscode.OutputChannel) {
     this.outputChannel = outputChannel;
     this.logs = [];
+    this.enabled = true;
   }
 
-  log(message: string) {
+  log(message: string, reset?: boolean, force?: boolean) {
+    if (!this.enabled && !force) {
+      return;
+    }
+
+    if (reset) {
+      this.outputChannel.clear();
+      this.logs = [];
+    }
+
     this.logs.push(message);
-    if (this.logs.length > 1000) {
-      this.logs = this.logs.slice(900);
-      this.outputChannel.replace(this.logs.join("\n"))
+    if (this.logs.length > 250) {
+      this.logs = this.logs.slice(100);
+      this.outputChannel.replace(this.logs.join("\n"));
     } else {
       this.outputChannel.appendLine(message);
     }
@@ -84,9 +95,28 @@ export class Terminator {
     this.panelStateTracker = new PanelStateTracker(this.outputChannel);
   }
 
+  reloadSettings(context: vscode.ExtensionContext) {
+    const config = vscode.workspace.getConfiguration("termin-all-or-nothing");
+
+    const verboseSettings = {
+      outputEnabled: config.get<boolean>("output.enable", false),
+    };
+    this.outputChannel.enabled = verboseSettings.outputEnabled;
+    this.outputChannel.log(`Termin-All-Or-Nothing Settings:\n${JSON.stringify(verboseSettings, undefined, 2)}`, true, true);
+  }
+
   activate(context: vscode.ExtensionContext) {
 
     this.registerCommand(context, extensionCommand("execute"), (args: ExecuteArgs) => this.execute(args));
+
+    this.reloadSettings(context);
+
+    // Handle settings updates
+    vscode.workspace.onDidChangeConfiguration(e => {
+      if (e.affectsConfiguration("termin-all-or-nothing")) {
+        this.reloadSettings(context);
+      }
+    });
 
     // This triggers when the set of visible text editors (including output panel view) changes.
     // When opening a file from the terminal, sometimes the onDidChangeTextEditorVisibleRanges
