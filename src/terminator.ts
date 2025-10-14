@@ -84,6 +84,7 @@ export class Terminator {
   private lastOpenTimeMs: number;
   private panelStateTracker: PanelStateTracker;
   private outputChannel: TruncatedOutputChannel;
+  private partialHeightMode: boolean;
 
   constructor() {
     this.togglingPanel = false;
@@ -93,6 +94,7 @@ export class Terminator {
     this.lastOpenTimeMs = 0;
     this.outputChannel = new TruncatedOutputChannel(vscode.window.createOutputChannel("termin-all-or-nothing"));
     this.panelStateTracker = new PanelStateTracker(this.outputChannel);
+    this.partialHeightMode = false;
   }
 
   reloadSettings(context: vscode.ExtensionContext) {
@@ -100,8 +102,12 @@ export class Terminator {
 
     const verboseSettings = {
       outputEnabled: config.get<boolean>("output.enable", false),
+      partialHeightMode: config.get<boolean>("partialHeightMode", false),
     };
+
     this.outputChannel.enabled = verboseSettings.outputEnabled;
+    this.partialHeightMode = verboseSettings.partialHeightMode;
+
     this.outputChannel.log(`Termin-All-Or-Nothing Settings:\n${JSON.stringify(verboseSettings, undefined, 2)}`, true, true);
   }
 
@@ -227,7 +233,9 @@ export class Terminator {
       // Before closing the panel, we move it down a little bit so that the panel
       // isn't as high as it can be (which would cause all visible ranges in cyborg mode
       // to be one line which would prevent 'Solution 2' from working).
-      vscode.commands.executeCommand("workbench.action.terminal.resizePaneDown");
+      if (!this.partialHeightMode) {
+        vscode.commands.executeCommand("workbench.action.terminal.resizePaneDown");
+      }
 
       await vscode.commands.executeCommand("workbench.action.closePanel");
       if (process.env.TERMIN_ALL_OR_NOTHING_TEST) {
