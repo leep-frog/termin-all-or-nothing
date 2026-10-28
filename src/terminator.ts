@@ -40,6 +40,7 @@ function isRelevantUri(uri: vscode.Uri): boolean {
     "file",
     "vscode-notebook-cell",
     "untitled", // VS Code scheme when a new file is created (via `code newFile.py`, for example)
+    "vscode-remote", // Files opened in a remote workspace (SSH, WSL, dev containers, etc.)
   ].includes(uri.scheme);
 }
 
