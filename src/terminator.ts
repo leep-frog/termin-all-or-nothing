@@ -318,7 +318,7 @@ export class PanelStateTracker {
 
   // update updates the state of this object and returns whether or not the panel should be closed.
   update(visibleTextEditors: readonly vscode.TextEditor[]): boolean {
-    // Considered inPanel if every visible range in every visible editor is a single line.
+    // Considered inPanel if every visible range in every visible editor is at most two lines.
     const nowInPanel = visibleTextEditors.every(editor => editor.visibleRanges.every(this.minimalRange));
 
     const shouldClosePanel = (this.inPanel && !nowInPanel);
@@ -335,6 +335,7 @@ export class PanelStateTracker {
   }
 
   private minimalRange(range: vscode.Range) {
-    return range.start.line === range.end.line;
+    // A maximized panel can leave enough editor space for two partially visible lines (e.g. [0, 1]).
+    return range.end.line - range.start.line <= 1;
   }
 }
